@@ -1,0 +1,12 @@
+This is a rdfa crawler for the data.gov.uk site. It walks the 
+complete listing of datasets and extracts the metadata from the 
+HTML that is expressed as RDFa.
+
+After you install python and rdflib you should be able to run it:
+
+    % crawl.py
+
+Comments, questions:
+
+Ed Summers <ehs@pobox.com>
+    
