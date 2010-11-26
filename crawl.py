@@ -17,7 +17,7 @@ graph.open('store', create=True)
 
 # the paged package listing that we will crawl to discover dataset urls
 page_url_tmpl = "http://data.gov.uk/search/apachesolr_search/?filters=type:ckan_package&page=%s"
-page = 444
+page = 0
 
 # extract rdf from each dataset html/rdfa page
 while True:
