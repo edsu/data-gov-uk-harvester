@@ -1,23 +1,35 @@
 #!/usr/bin/env python
 
-from urllib import urlopen
-from socket import setdefaulttimeout
+import sys
+import socket
+import httplib
+import urllib2
+import traceback
 
-from rdflib.graph import ConjunctiveGraph
-from rdflib.term import URIRef
-from rdflib.namespace import Namespace
+import rdflib
 
-dct = Namespace('http://purl.org/dc/terms/')
-g = ConjunctiveGraph('Sleepycat')
+dcat = rdflib.Namespace('http://vocab.deri.ie/dcat#')
+g = rdflib.ConjunctiveGraph('Sleepycat')
 g.open('store')
-setdefaulttimeout(20)
 
-for s, o in g.subject_objects(predicate=dct['source']):
+socket.setdefaulttimeout(20)
+for dataset, distribution in g.subject_objects(predicate=dcat.distribution):
+
+    info = None
     try: 
-        info = urlopen(o)
-        status = info.getcode()
-    except Exception, e:
-        status = str(e)
-    print s, "\t", o, "\t", status
+        info = urllib2.urlopen(distribution.encode('utf-8'))
+        status = str(info.getcode())
+        content_type = info.headers.get('content-type', "")
+    except urllib2.HTTPError, e:
+        status = str(e.getcode())
+        content_type = e.headers.get('content-type', "")
+    except urllib2.URLError, e:
+        status = "bad url"
+        content_type = ""
+    except httplib.InvalidURL, e:
+        status = e
+        content_type = ""
+
+    print "\t".join([dataset, distribution, status, content_type]).encode('utf-8')
 
 g.close()
